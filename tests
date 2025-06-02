@@ -1,3 +1,29 @@
+#inlcude <bits/stdc++.h>
+
+int main(){
+    int gifts;
+    vector<int> scores;
+    vector<int> gifts_vector;
+    int len = scores.size();
+    for(int i = 0; i < len; i++){
+        gifts_vector.push_back(1);
+    }
+    for(int i = 0; i < len; i++){
+        if(i == 0 && scores[i] > scores[i+1]){
+            gifts_vector[i]++;
+        }
+        else if(i == len-1 && scores[i] > scores[i-1]){
+            gifts_vector[i] += scores[i-1];
+        }
+        if(scores[i-1] < scores[i]){
+            gifts_vector[i] += scores[i-1];
+        }
+        else if(scores[i] > scores[i+1]){
+            gifts_vector[i] += 1;
+        }
+    }
+}
+//////////////////////////////////////////////////////////////////////////////
 https://gist.github.com/SuhasDissa/003fc41d3a0a27f2152a09e1a51c1597
 //////////////////////////////////////////////////////////////////////////////////////////////////
 int evenForest(int t_nodes, int t_edges, vector<int> t_from, vector<int> t_to) {
