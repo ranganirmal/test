@@ -1,0 +1,163 @@
+https://gist.github.com/SuhasDissa/003fc41d3a0a27f2152a09e1a51c1597
+//////////////////////////////////////////////////////////////////////////////////////////////////
+int evenForest(int t_nodes, int t_edges, vector<int> t_from, vector<int> t_to) {
+    vector<vector<int>> tree(t_nodes + 1);
+    vector<bool> visited(t_nodes + 1, false);
+    int removableEdges = 0;
+
+    // Build the undirected graph (tree)
+    for (int i = 0; i < t_edges; ++i) {
+        tree[t_from[i]].push_back(t_to[i]);
+        tree[t_to[i]].push_back(t_from[i]);
+    }
+
+    // DFS function to calculate subtree sizes
+    function<int(int)> dfs = [&](int node) {
+        visited[node] = true;
+        int subtree_size = 1; // count the node itself
+
+        for (int neighbor : tree[node]) {
+            if (!visited[neighbor]) {
+                int child_subtree_size = dfs(neighbor);
+                if (child_subtree_size % 2 == 0) {
+                    // If child subtree has even number of nodes, we can cut the edge
+                    ++removableEdges;
+                } else {
+                    subtree_size += child_subtree_size;
+                }
+            }
+        }
+
+        return subtree_size;
+    };
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+#include <cmath>
+#include <cstdio>
+#include <vector>
+#include <iostream>
+#include <sstream>
+#include <algorithm>
+using namespace std;
+
+int process(vector<int> nums,int search, int p, int r){
+    
+    if(r < p){
+        return -1;
+    }
+    int q = (p+r)/2;
+    if(search == nums[q]){
+        return q;
+    }
+    if(nums[p] < nums[q]){
+        if(nums[p] <= search && search <= nums[q-1]){
+            return process(nums, search, p, q-1);
+        }
+        else{
+            return process(nums, search, q+1, r);
+        }
+    }
+    if(nums[q] < nums[r]){
+        if(nums[q+1] <= search && search <= nums[r]){
+            return process(nums, search, q+1, r);      
+        }
+        else{
+            return process(nums, search, p, q-1);
+        }
+    }
+    return -1;
+}
+int main() {
+    string line;
+    getline(cin, line);
+    stringstream ss(line);
+    string num;
+    vector<int> nums;
+    
+    while(getline(ss, num, ',')){
+        nums.push_back(stoi(num));
+    }
+    int size = nums.size();
+    int search;
+    cin>>search;
+    cout<<process(nums,search, 0, size-1)<<endl;
+    return 0;
+}
+
+
+    dfs(1); // assuming 1 is the root
+
+    return removableEdges;
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <unordered_map>
+#include <algorithm>
+#include <string>
+
+using namespace std;
+
+int leastInterval(vector<char>& tasks, int n) {
+    unordered_map<char, int> freq;
+    for (char task : tasks) freq[task]++;
+    
+    // Max heap based on task frequency
+    priority_queue<int> pq;
+    for (auto& pair : freq) pq.push(pair.second);
+    
+    queue<pair<int, int>> cooldown; // (task count left, time it can re-enter)
+    int time = 0;
+    
+    while (!pq.empty() || !cooldown.empty()) {
+        time++;
+        
+        // Ready to push task back to heap
+        if (!cooldown.empty() && cooldown.front().second == time) {
+            pq.push(cooldown.front().first);
+            cooldown.pop();
+        }
+
+        if (!pq.empty()) {
+            int count = pq.top();
+            pq.pop();
+            if (count > 1) {
+                cooldown.push({count - 1, time + n + 1});
+            }
+        }
+        // else: idle step
+    }
+    
+    return time;
+}
+
+int main() {
+    vector<char> tasks;
+    int n;
+    
+    string input;
+    getline(cin, input); // Read the array of tasks like ['A','B',...]
+    
+    // Clean input string
+    input.erase(remove(input.begin(), input.end(), '['), input.end());
+    input.erase(remove(input.begin(), input.end(), ']'), input.end());
+    input.erase(remove(input.begin(), input.end(), '\''), input.end());
+    input.erase(remove(input.begin(), input.end(), '"'), input.end());
+    input.erase(remove(input.begin(), input.end(), ' '), input.end());
+    
+    // Parse input
+    size_t pos = 0;
+    while ((pos = input.find(',')) != string::npos) {
+        tasks.push_back(input.substr(0, pos)[0]);
+        input.erase(0, pos + 1);
+    }
+    if (!input.empty()) tasks.push_back(input[0]);
+
+    cin >> n;
+    cout << leastInterval(tasks, n) << endl;
+
+    return 0;
+}
